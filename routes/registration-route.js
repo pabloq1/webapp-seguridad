@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var db=require('../database');
+// const { passwordValidation } = require('../utils/utils');
+const validation = require('../utils/utils')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
@@ -14,8 +16,17 @@ router.get('/register', function(req, res, next) {
  * INPUT LOGIC on POST
  */
 
+function passwordValidation(password) {
+    var numeric_characters = /[0-9]/;
+    var special_characters = /[#?!@$%^&*\-_\\\/]/;
+    var capital_letters = /[A-Z]/;
+    return password.match(special_characters) != undefined && 
+            password.match(capital_letters) != undefined && 
+            password.match(numeric_characters) != undefined && 
+            password.length >= 8;
+};
+
 router.post('/register', function(req, res, next) {
-    
     inputData ={
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -37,9 +48,10 @@ router.post('/register', function(req, res, next) {
         if(data.length > 1){
             var msg = inputData.email_address+ "was already exist";
         } else if (inputData.confirm_password != inputData.password){
-                var msg ="Password & Confirm Password is not Matched";
+            var msg ="Password & Confirm Password is not Matched";
+        } else if (!validation(inputData.password)) {
+            var msg ="Passwords ALGO MENSAJE";
         } else {
-        
         /* -- SAVE USER INTO DATABASE -- */
             /* -- HASH -- */
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
