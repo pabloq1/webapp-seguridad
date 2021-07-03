@@ -5,7 +5,7 @@ const validation = require('../utils/utils')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
-import * as constants from "../utils/constants";
+const constants = require('../utils/constants')
 
 // display registration form 
 router.get('/register', function(req, res, next) {

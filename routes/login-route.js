@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const saltRounds = 10
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`
 const validation = require('../utils/utils')
-import * as constants from '../utils/constants'
+const constants = require('../utils/constants')
 
 // display login form 
 router.get('/login', function(req, res, next) {
@@ -26,7 +26,7 @@ router.post('/login', function(req, res, next) {
         if (!(query_result.length > 1) || !validation(password)) {
             var msg = constants.INVALID_CREDENTIALS
         } else {
-            // validar usuario en la db
+            // validar usuario en la dbnpm
             // en internet usan las session
         }
     });
