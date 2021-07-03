@@ -3,11 +3,11 @@ const router = express.Router();
 const db=require('../database');
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = parseInt(`${process.env.SALT}`)
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
 const constants = require('../utils/constants')
 
-// display registration form 
+/* GET registration form */
 router.get('/register', function(req, res, next) {
   res.render('registration-form');
 });
@@ -24,11 +24,12 @@ router.post('/register', function(req, res, next) {
     }
 
     /* DATABASE */
-    // check unique email address
     var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address =?`;
     db.query(sql, [inputData.email_address], function (err, query_result, fields) {
+        console.log("hola")
         if(err) throw err
         if(query_result.length > 0){
+            // check unique email address
             var msg = constants.OTHER_EMAIL
         } else if (inputData.confirm_password != inputData.password){
             var msg = constants.PASSWORDS_NOT_MATCHING
