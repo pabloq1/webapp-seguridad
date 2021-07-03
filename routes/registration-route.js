@@ -28,27 +28,22 @@ router.post('/register', function(req, res, next) {
     var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address =?`;
     db.query(sql, [inputData.email_address], function (err, query_result, fields) {
         if(err) throw err
-
-        if(query_result.length > 1){
+        if(query_result.length > 0){
             var msg = constants.OTHER_EMAIL
         } else if (inputData.confirm_password != inputData.password){
             var msg = constants.PASSWORDS_NOT_MATCHING
         } else if (!validation(inputData.password)) {
             var msg = constants.PASSWORD_FORMAT
         } else {
-        /* -- SAVE USER INTO DATABASE -- */
-            /* -- HASH -- */
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
             inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
             var sql = `INSERT INTO ${process.env.DB_NAME} SET ?`;
             db.query(sql, inputData, function (err, query_result) {
             if (err) throw err;
-            });
-        var msg = constants.REGISTER_SUCCESS;
+            })
+            var msg = constants.REGISTER_SUCCESS;
         }
-
         res.render('registration-form', { alertMsg:msg });
     })
-     
 });
 module.exports = router;
