@@ -5,11 +5,13 @@ const validation = require('../utils/utils')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`
+const validation = require('../utils/utils')
+import * as constants from '../utils/constants'
 
 // display login form 
 router.get('/login', function(req, res, next) {
     res.render('login-form')
-  })
+  });
 
 router.post('/login', function(req, res, next) {
     inputData = {
@@ -18,9 +20,15 @@ router.post('/login', function(req, res, next) {
     }
 
     /* check if email exists on DB */
-    var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address=?`
-    db.query(sql, [inputData.email_address], function (err, data, fields) {
-        
-    })
+    var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address=? AND password=?`
+    db.query(SQL_STATEMENT, [email_address, password], function (err, query_result, fields) {
+        // query logic, PENDING PASSWORD CHECK
+        if (!(query_result.length > 1) || !validation(password)) {
+            var msg = constants.INVALID_CREDENTIALS
+        } else {
+            // validar usuario en la db
+            // en internet usan las session
+        }
+    });
 
-})
+});
