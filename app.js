@@ -17,9 +17,6 @@ const app = express();
 const sqlinjection = require('sql-injection');
 app.use(sqlinjection);
 
-app.configure(function() {
-  app.use(sqlinjection); 
-});
 // -----------------
 
 // view engine setup
