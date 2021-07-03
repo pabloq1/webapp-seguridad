@@ -3,7 +3,7 @@ var router = express.Router()
 var db = require('../database')
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt')
-const saltRounds = 10
+const saltRounds = parseInt(`${process.env.SALT}`)
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`
 const constants = require('../utils/constants')
 
@@ -31,10 +31,10 @@ router.post('/login', function(req, res, next) {
             bcrypt.compare(inputData.password, query_result[0].password, (err, data) => {
                 if (err) throw err
                 if (data) {
-                    req.session.loggedinUser = true
+                    req.session.loggedInUser = true
                     req.session.emailAddress = inputData.email_address
                     console.log("SE LOGUEO BIEN")
-                    // res.redirect('/dashboard');
+                    res.redirect('/dashboard');
                 } else {
                     var msg = constants.INVALID_CREDENTIALS
                     res.render('login-form', { alertMsg:msg });
