@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var db=require('../database');
-// const { passwordValidation } = require('../utils/utils');
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -17,7 +16,7 @@ router.get('/register', function(req, res, next) {
  */
 
 router.post('/register', function(req, res, next) {
-    inputData ={
+    inputData = {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email_address: req.body.email_address,
@@ -31,16 +30,16 @@ router.post('/register', function(req, res, next) {
      */
 
     // check unique email address
-    var sql='SELECT * FROM registration WHERE email_address =?';
+    var sql = 'SELECT * FROM registration WHERE email_address =?';
     db.query(sql, [inputData.email_address], function (err, data, fields) {
         if(err) throw err
 
         if(data.length > 1){
             var msg = inputData.email_address+ "was already exist";
         } else if (inputData.confirm_password != inputData.password){
-            var msg ="Password & Confirm Password is not Matched";
+            var msg = "Password & Confirm Password is not Matched";
         } else if (!validation(inputData.password)) {
-            var msg ="Passwords ALGO MENSAJE";
+            var msg = "Passwords ALGO MENSAJE";
         } else {
         /* -- SAVE USER INTO DATABASE -- */
             /* -- HASH -- */
