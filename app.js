@@ -13,6 +13,15 @@ const session = require('express-session');
 
 const app = express();
 
+//SQL Injection
+const sqlinjection = require('sql-injection');
+app.use(sqlinjection);
+
+app.configure(function() {
+  app.use(sqlinjection); 
+});
+// -----------------
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
