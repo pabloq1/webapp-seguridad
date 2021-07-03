@@ -1,11 +1,7 @@
-/**
- * UTIL METHODS
- */
-
 const password_validation = function(password) {
-    var numeric_characters = /[0-9]/;
-    var special_characters = /[#?!@$%^&*\-_\\\/]/;
-    var capital_letters = /[A-Z]/;
+    const numeric_characters = /[0-9]/;
+    const special_characters = /[#?!@$%^&*\-_\\\/]/;
+    const capital_letters = /[A-Z]/;
     return password.match(special_characters) != undefined && 
             password.match(capital_letters) != undefined && 
             password.match(numeric_characters) != undefined && 
@@ -13,5 +9,3 @@ const password_validation = function(password) {
    };
 
 module.exports = password_validation;
-
-// Qwertyuiop1!

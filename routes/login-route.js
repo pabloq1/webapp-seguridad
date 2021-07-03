@@ -5,7 +5,6 @@ const validation = require('../utils/utils')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`
-const validation = require('../utils/utils')
 const constants = require('../utils/constants')
 
 // display login form 
@@ -23,12 +22,16 @@ router.post('/login', function(req, res, next) {
     var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address=? AND password=?`
     db.query(SQL_STATEMENT, [email_address, password], function (err, query_result, fields) {
         // query logic, PENDING PASSWORD CHECK
-        if (!(query_result.length > 1) || !validation(password)) {
+        if(err) throw err
+        if (!(query_result.length > 0) || !validation(password)) {
             var msg = constants.INVALID_CREDENTIALS
         } else {
-            // validar usuario en la dbnpm
-            // en internet usan las session
+            req.session.loggedinUser = true
+            req.session.emailAddress = email_address
+            // res.redirect('/dashboard');
         }
+        res.render('registration-form', { alertMsg:msg });
     });
 
 });
+module.exports = router;
