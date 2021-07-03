@@ -7,7 +7,7 @@ const saltRounds = parseInt(`${process.env.SALT}`)
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
 const constants = require('../utils/constants')
 
-// display registration form 
+/* GET registration form */
 router.get('/register', function(req, res, next) {
   res.render('registration-form');
 });

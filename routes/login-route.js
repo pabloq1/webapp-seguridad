@@ -1,13 +1,13 @@
-var express = require('express')
-var router = express.Router()
-var db = require('../database')
+const express = require('express')
+const router = express.Router()
+const db = require('../database')
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt')
 const saltRounds = parseInt(`${process.env.SALT}`)
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`
 const constants = require('../utils/constants')
 
-// display login form 
+/* GET login form */
 router.get('/login', function(req, res, next) {
     res.render('login-form')
   });
