@@ -1,23 +1,20 @@
-var express = require('express');
-var router = express.Router();
-var db=require('../database');
-// const { passwordValidation } = require('../utils/utils');
+const express = require('express');
+const router = express.Router();
+const db=require('../database');
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
+const constants = require('../utils/constants')
 
-// to display registration form 
+// display registration form 
 router.get('/register', function(req, res, next) {
   res.render('registration-form');
 });
 
-/**
- * INPUT LOGIC on POST
- */
-
+/* USER INPUT */
 router.post('/register', function(req, res, next) {
-    inputData ={
+    inputData = {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email_address: req.body.email_address,
@@ -26,35 +23,27 @@ router.post('/register', function(req, res, next) {
         confirm_password: req.body.confirm_password
     }
 
-    /**
-     * DATABASE LOGIC
-     */
-
+    /* DATABASE */
     // check unique email address
-    var sql='SELECT * FROM registration WHERE email_address =?';
-    db.query(sql, [inputData.email_address], function (err, data, fields) {
+    var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address =?`;
+    db.query(sql, [inputData.email_address], function (err, query_result, fields) {
         if(err) throw err
-
-        if(data.length > 1){
-            var msg = inputData.email_address+ "was already exist";
+        if(query_result.length > 0){
+            var msg = constants.OTHER_EMAIL
         } else if (inputData.confirm_password != inputData.password){
-            var msg ="Password & Confirm Password is not Matched";
+            var msg = constants.PASSWORDS_NOT_MATCHING
         } else if (!validation(inputData.password)) {
-            var msg ="Passwords ALGO MENSAJE";
+            var msg = constants.PASSWORD_FORMAT
         } else {
-        /* -- SAVE USER INTO DATABASE -- */
-            /* -- HASH -- */
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
             inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
-            var sql = 'INSERT INTO registration SET ?';
-            db.query(sql, inputData, function (err, data) {
+            var sql = `INSERT INTO ${process.env.DB_NAME} SET ?`;
+            db.query(sql, inputData, function (err, query_result) {
             if (err) throw err;
-            });
-        var msg ="Your are successfully registered";
+            })
+            var msg = constants.REGISTER_SUCCESS;
         }
-
-        res.render('registration-form',{alertMsg:msg});
+        res.render('registration-form', { alertMsg:msg });
     })
-     
 });
 module.exports = router;
