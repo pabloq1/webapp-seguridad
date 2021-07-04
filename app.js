@@ -6,6 +6,7 @@ const logger = require('morgan');
 const dotenv = require('dotenv').config();
 const session = require('express-session');
 const app = express();
+const uuid = require('uuid').v4;
 
 // -----------------
 
@@ -17,9 +18,8 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-
 app.use(session({
-  secret: '123456cat',
+  secret: uuid(),
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 60000 }

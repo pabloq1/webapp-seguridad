@@ -9,7 +9,7 @@ const constants = require('../utils/constants')
 
 /* GET registration form */
 router.get('/register', function(req, res, next) {
-  res.render('registration-form');
+  res.render('registration-form', {registration:constants.REGISTRATION});
 });
 
 /* USER INPUT */
@@ -44,7 +44,8 @@ router.post('/register', function(req, res, next) {
             })
             var msg = constants.REGISTER_SUCCESS;
         }
-        res.render('registration-form', { alertMsg:msg });
+        res.render('registration-form', { alertMsg:msg,     
+                                        passwordInfo:constants.PASSWORD_CHARACTERS });
     })
 });
 module.exports = router;
