@@ -18,14 +18,8 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-<<<<<<< HEAD
-
-app.use(session({ 
-  secret: 'ssssecretkeyyy123',
-=======
 app.use(session({
   secret: uuid(),
->>>>>>> admin-login
   resave: false,
   saveUninitialized: true,
   duration: 30 * 60 * 1000,
