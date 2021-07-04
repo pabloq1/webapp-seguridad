@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt')
 const constants = require('../utils/constants')
 
 /* GET dashboard form */
-router.get('/dashboard', function(req, res, next) {
+router.get('/user/dashboard', function(req, res, next) {
     if (req.session.loggedInUser) {
         res.render('dashboard-form', {email:req.session.emailAddress})
     } else {
-        res.redirect('/register')
+        res.redirect('/user/register')
     }
   });
 

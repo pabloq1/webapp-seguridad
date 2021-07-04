@@ -8,11 +8,11 @@ const myPlaintextPassword = `${process.env.PLAIN_PASS}`
 const constants = require('../utils/constants')
 
 /* GET login form */
-router.get('/login', function(req, res, next) {
+router.get('/user/login', function(req, res, next) {
     res.render('login-form')
   });
 
-router.post('/login', function(req, res, next) {
+router.post('/user/login', function(req, res, next) {
     inputData = {
         email_address: req.body.email_address,
         password: req.body.password
@@ -34,12 +34,12 @@ router.post('/login', function(req, res, next) {
                     req.session.loggedInUser = true
                     req.session.emailAddress = inputData.email_address
                     console.log("SE LOGUEO BIEN")
-                    res.redirect('/dashboard');
+                    res.redirect('/user/dashboard');
                 } else {
                     var msg = constants.INVALID_CREDENTIALS
                     res.render('login-form', { alertMsg:msg });
                 }
-            })   
+            })
         }
     });
 });
