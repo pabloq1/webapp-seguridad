@@ -28,13 +28,15 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')))
 
 /* routes */
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const adminPageRouter = require('./routes/adminpage-route')
+const indexRouter = require('./routes/index')
+const usersRouter = require('./routes/users')
 const registrationRouter = require('./routes/registration-route')
 const loginRouter = require('./routes/login-route')
 const dashboardRouter = require('./routes/dashboard-route')
 const logoutRouter = require('./routes/logout-route')
 
+app.use('/admin', adminPageRouter)
 app.use('/user', indexRouter)
 app.use('/user', usersRouter)
 app.use('/user', registrationRouter)
