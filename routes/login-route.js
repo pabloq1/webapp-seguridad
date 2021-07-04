@@ -19,7 +19,7 @@ router.post('/login', function(req, res, next) {
     }
 
     /* check if email exists on DB */
-    var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address=?`  /*Deberia devolver uno solo (1 cuenta por direccion de email) */
+    var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USER_TABLE} WHERE email_address=?`  /*Deberia devolver uno solo (1 cuenta por direccion de email) */
     db.query(SQL_STATEMENT, [inputData.email_address], function (err, query_result, fields) {
         if(err) throw err
         if (!(query_result.length > 0) || !validation(inputData.password)) {

@@ -7,5 +7,5 @@ module.exports = {
     PASSWORD_CHARACTERS: "Password must contain at least 8 characters.",
     REGISTRATION: "Registration",
     NEW_REGISTRATION: "Register Here",
-    USER_LOGIN: "User Login",
+    USER_LOGIN: "User Login"
   };

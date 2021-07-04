@@ -24,7 +24,7 @@ router.post('/register', function(req, res, next) {
     }
 
     /* DATABASE */
-    var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address =?`;
+    var sql = `SELECT * FROM ${process.env.DB_USER_TABLE} WHERE email_address =?`;
     db.query(sql, [inputData.email_address], function (err, query_result, fields) {
         console.log("hola")
         if(err) throw err
@@ -38,7 +38,7 @@ router.post('/register', function(req, res, next) {
         } else {
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
             inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
-            var sql = `INSERT INTO ${process.env.DB_NAME} SET ?`;
+            var sql = `INSERT INTO ${process.env.DB_USER_TABLE} SET ?`;
             db.query(sql, inputData, function (err, query_result) {
             if (err) throw err;
             })
