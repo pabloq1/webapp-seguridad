@@ -6,7 +6,7 @@ const constants = require('../utils/constants')
 
 /* GET logout */
 router.get('/logout', function(req, res, next) {
-    req.session.destroy();
+    req.session.destr
     res.redirect('/user/login');
 });
 

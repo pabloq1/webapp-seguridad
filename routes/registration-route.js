@@ -15,17 +15,17 @@ router.get('/register', function(req, res, next) {
 /* USER INPUT */
 router.post('/register', function(req, res, next) {
     inputData = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email_address: req.body.email_address,
+        nombreUser: req.body.first_name,
+        apellidoUser: req.body.last_name,
+        email: req.body.email_address,
         gender: req.body.gender,
         password: req.body.password,
         confirm_password: req.body.confirm_password
     }
 
     /* DATABASE */
-    var sql = `SELECT * FROM ${process.env.DB_USER_TABLE} WHERE email_address =?`;
-    db.query(sql, [inputData.email_address], function (err, query_result, fields) {
+    var sql = `SELECT * FROM ${process.env.DB_USUARIO_TABLE} WHERE email =?`;
+    db.query(sql, [inputData.email], function (err, query_result, fields) {
         console.log("hola")
         if(err) throw err
         if(query_result.length > 0){
@@ -36,12 +36,17 @@ router.post('/register', function(req, res, next) {
         } else if (!validation(inputData.password)) {
             var msg = constants.PASSWORD_FORMAT
         } else {
-            inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
-            inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
-            var sql = `INSERT INTO ${process.env.DB_USER_TABLE} SET ?`;
-            db.query(sql, inputData, function (err, query_result) {
+            inputData.password = bcrypt.hashSync(inputData.password, saltRounds)
+            inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds)
+            var sql = `INSERT INTO ${process.env.DB_USUARIO_TABLE} SET ?`
+            var sql_grupo = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
+            db.query(sql, [inputData.nombreUser, inputData.email, inputData.password, inputData.gender], function (err, query_result) {
             if (err) throw err;
             })
+
+            db.query(sql_grupo, [inputData.email, inputData.email], function (err, query_result) {
+                if (err) throw err;
+                })
             var msg = constants.REGISTER_SUCCESS;
         }
         res.render('registration-form', { alertMsg:msg,     
