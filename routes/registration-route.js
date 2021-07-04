@@ -38,15 +38,9 @@ router.post('/register', function(req, res, next) {
         } else {
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
             inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
-<<<<<<< HEAD
-            var sql = `INSERT INTO ${process.env.DB_NAME} SET ?`;
-            db.query(sql, inputData, function (error, query_result) {
-            if (error) throw error;
-=======
             var sql = `INSERT INTO ${process.env.DB_USER_TABLE} SET ?`;
             db.query(sql, inputData, function (err, query_result) {
             if (err) throw err;
->>>>>>> admin-login
             })
             var msg = constants.REGISTER_SUCCESS;
         }
