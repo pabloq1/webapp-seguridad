@@ -9,7 +9,7 @@ router.get('/dashboard', function(req, res, next) {
     if (req.session.loggedInUser) {
         res.render('dashboard-form', {email:req.session.emailAddress})
     } else {
-        res.redirect('/register')
+        res.redirect('/user/register')
     }
   });
 

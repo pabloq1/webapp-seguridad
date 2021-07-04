@@ -9,7 +9,7 @@ const constants = require('../utils/constants')
 
 /* GET registration form */
 router.get('/register', function(req, res, next) {
-  res.render('registration-form');
+  res.render('registration-form', {registration:constants.REGISTRATION});
 });
 
 /* USER INPUT */
@@ -24,9 +24,10 @@ router.post('/register', function(req, res, next) {
     }
 
     /* DATABASE */
-    var sql = `SELECT * FROM ${process.env.DB_NAME} WHERE email_address =?`;
-    db.query(sql, [inputData.email_address], function (error, query_result, fields) {
-        if(error) throw error
+    var sql = `SELECT * FROM ${process.env.DB_USER_TABLE} WHERE email_address =?`;
+    db.query(sql, [inputData.email_address], function (err, query_result, fields) {
+        console.log("hola")
+        if(err) throw err
         if(query_result.length > 0){
             // check unique email address
             var msg = constants.OTHER_EMAIL
@@ -37,13 +38,20 @@ router.post('/register', function(req, res, next) {
         } else {
             inputData.password = bcrypt.hashSync(inputData.password, saltRounds);
             inputData.confirm_password = bcrypt.hashSync(inputData.confirm_password, saltRounds);
+<<<<<<< HEAD
             var sql = `INSERT INTO ${process.env.DB_NAME} SET ?`;
             db.query(sql, inputData, function (error, query_result) {
             if (error) throw error;
+=======
+            var sql = `INSERT INTO ${process.env.DB_USER_TABLE} SET ?`;
+            db.query(sql, inputData, function (err, query_result) {
+            if (err) throw err;
+>>>>>>> admin-login
             })
             var msg = constants.REGISTER_SUCCESS;
         }
-        res.render('registration-form', { alertMsg:msg });
+        res.render('registration-form', { alertMsg:msg,     
+                                        passwordInfo:constants.PASSWORD_CHARACTERS });
     })
 });
 module.exports = router;

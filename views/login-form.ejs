@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./sass/main.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
         integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <title>User Login</title>
+    <title> Login </title>
     <style>
         html,
         body {
@@ -162,7 +161,7 @@
 
 <body>
     <div class="main-block">
-        <h1>Login</h1>
+        <h1><%= (typeof userLogin!='undefined' )? userLogin:'' %></h1>
         <form method="post" action="login">
             <hr>
 
@@ -174,11 +173,9 @@
 
             <hr>
             <div class="btn-block">
-                <p><small>
-                        <%= (typeof alertMsg!='undefined' )? alertMsg:'' %>
-                    </small></p>
+                <p><small><%= (typeof alertMsg!='undefined' )? alertMsg:'' %></small></p>
                 <button type="submit" href="/">Login</button>
-                <button><a href="/register">New Registration</a></button>
+                <button><a href="/user/register"> <%= (typeof newRegistration!='undefined' )? newRegistration:'' %></a></button>
             </div>
         </form>
     </div>

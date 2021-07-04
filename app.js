@@ -6,6 +6,7 @@ const logger = require('morgan');
 const dotenv = require('dotenv').config();
 const session = require('express-session');
 const app = express();
+const uuid = require('uuid').v4;
 
 // -----------------
 
@@ -17,9 +18,14 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
+<<<<<<< HEAD
 
 app.use(session({ 
   secret: 'ssssecretkeyyy123',
+=======
+app.use(session({
+  secret: uuid(),
+>>>>>>> admin-login
   resave: false,
   saveUninitialized: true,
   duration: 30 * 60 * 1000,
@@ -32,19 +38,12 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')))
 
 /* routes */
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index')
+const usersRouter = require('./routes/users')
 const registrationRouter = require('./routes/registration-route')
 const loginRouter = require('./routes/login-route')
 const dashboardRouter = require('./routes/dashboard-route')
 const logoutRouter = require('./routes/logout-route')
-
-// app.use('/', indexRouter)
-// app.use('/', usersRouter)
-// app.use('/', registrationRouter)
-// app.use('/', loginRouter)
-// app.use('/', dashboardRouter)
-// app.use('/', logoutRouter)
 
 app.use('/user', indexRouter)
 app.use('/user', usersRouter)
