@@ -8,3 +8,5 @@ const constants = require('../utils/constants')
 router.get('/adminpage', function(req, res, next) {
     res.render('adminpage-form')
   });
+
+module.exports = router;
