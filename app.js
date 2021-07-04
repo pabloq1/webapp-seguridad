@@ -19,10 +19,14 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use(session({ 
-  secret: '123456cat',
+  secret: 'ssssecretkeyyy123',
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 60000 }
+  duration: 30 * 60 * 1000,
+  cookie: { maxAge: 60000,
+            secure: true,
+            httpOnly: true,
+            ephemeral: true }
 }));
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -35,12 +39,19 @@ const loginRouter = require('./routes/login-route')
 const dashboardRouter = require('./routes/dashboard-route')
 const logoutRouter = require('./routes/logout-route')
 
-app.use('/', indexRouter)
-app.use('/', usersRouter)
-app.use('/', registrationRouter)
-app.use('/', loginRouter)
-app.use('/', dashboardRouter)
-app.use('/', logoutRouter)
+// app.use('/', indexRouter)
+// app.use('/', usersRouter)
+// app.use('/', registrationRouter)
+// app.use('/', loginRouter)
+// app.use('/', dashboardRouter)
+// app.use('/', logoutRouter)
+
+app.use('/user', indexRouter)
+app.use('/user', usersRouter)
+app.use('/user', registrationRouter)
+app.use('/user', loginRouter)
+app.use('/user', dashboardRouter)
+app.use('/user', logoutRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

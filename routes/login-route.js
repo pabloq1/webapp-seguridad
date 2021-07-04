@@ -31,6 +31,11 @@ router.post('/login', function(req, res, next) {
             bcrypt.compare(inputData.password, query_result[0].password, (err, data) => {
                 if (err) throw err
                 if (data) {
+                    /**
+                     * Storing in a cookie:
+                     * 1. loggedInUser boolean
+                     * 2. user email address
+                     * */ 
                     req.session.loggedInUser = true
                     req.session.emailAddress = inputData.email_address
                     console.log("SE LOGUEO BIEN")
