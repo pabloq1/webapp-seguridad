@@ -4,8 +4,11 @@ const db = require('../database')
 const validation = require('../utils/utils')
 const bcrypt = require('bcrypt')
 const saltRounds = parseInt(`${process.env.SALT}`)
-cout
-er.get('/login', function(req, res, next) {
+const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
+const constants = require('../utils/constants')
+
+
+router.get('/login', function(req, res, next) {
     res.render('login-form', { userLogin:constants.USER_LOGIN, newRegistration:constants.NEW_REGISTRATION })
   });
 

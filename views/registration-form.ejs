@@ -134,7 +134,7 @@
 </head>
 <body>
   <div class="main-block">
-    <h1><%= registration %></h1>
+    <h1>Registration</h1>
     <form method="post" action="register">
       <hr>
 
@@ -152,6 +152,9 @@
 
       <label id="icon" for="confirm_password"><i class="fas fa-unlock-alt"></i></label>
       <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm password" required/>
+
+      <label id="icon" for="group_name"><i class="fas fa-user"></i></label>
+      <input type="text" name="group_name" id="group_name" placeholder="Group name" required/>
 
       <p><small><%= (typeof passwordInfo!='undefined' )? passwordInfo:''  %></small></p>
 
