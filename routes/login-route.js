@@ -24,14 +24,12 @@ router.post('/login', function(req, res, next) {
         if (err) throw err
         if (!(query_result.length > 0) || !validation(inputData.password)) {
             var msg = constants.INVALID_CREDENTIALS
-            console.log("Aver")
             res.render('login-form', { alertMsg: msg, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
         } else {
             /* query_result[0] because only one mail is allowed */
             bcrypt.compare(inputData.password, query_result[0].password, (err, data) => {
                 if (err) throw err
                 if (data) {
-                    console.log(query_result)
                         /**
                          * Storing in a cookie:
                          * 1. loggedInUser boolean
@@ -39,7 +37,6 @@ router.post('/login', function(req, res, next) {
                          * */
                     req.session.loggedInUser = true
                     req.session.emailAddress = inputData.email
-                    console.log(req.session.emailAddress);
                     res.redirect('/user/dashboard');
                 } else {
                     var msg = constants.INVALID_CREDENTIALS

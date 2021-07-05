@@ -8,8 +8,10 @@ const constants = require('../utils/constants')
 /* GET dashboard form */
 router.get('/dashboard', function(req, res, next) {
     console.log(req.session.loggedInUser);
-    if (req.session.loggedInUser) { 
-        res.render('dashboard-form', { email: req.session.emailAddress })
+    if (req.session.loggedInUser) {
+        //res.render('dashboard-form', { email: req.session.emailAddress })
+        userGroupsList = obtenerGruposDeUsuario(req.session.emailAddress)
+        res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
     } else {
         res.redirect('/user/register')
     }
@@ -17,26 +19,24 @@ router.get('/dashboard', function(req, res, next) {
 
 router.post('/dashboard', function(req, res, next) {
     if (req.session.loggedInUser) {
-        userGroupsList = obtenerGruposDeUsuario(req.session.loggedInUser)
-        res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
+        // userGroupsList = obtenerGruposDeUsuario(req.session.loggedInUser)
+        res.render('dashboard-form', { email: req.session.emailAddress })
 
     }
 });
 
-function obtenerGruposDeUsuario(emailUser) {
+function obtenerGruposDeUsuario(emailAddress) {
     SQL_STATEMENT = `SELECT nombreGrupo FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =?`;
 
-    db.query(SQL_STATEMENT, [req.session.emailAddress], function(err, query_result, fields) {
+    db.query(SQL_STATEMENT, [emailAddress], function(err, query_result, fields) {
         var numberOfGroups = 0
         var userGroupsList = []
         if (query_result.length > 0) {
             numberOfGroups = query_result.length
             for (i = 0; i <= numberOfGroups - 1; i++) {
                 userGroupsList.push(query_result[i].nombreGrupo)
-                console.log("Aca entra")
             }
         }
-        console.log(userGroupsList)
         return userGroupsList
     })
 
