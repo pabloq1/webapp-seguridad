@@ -14,13 +14,13 @@ router.get('/login', function(req, res, next) {
 
 router.post('/login', function(req, res, next) {
     inputData = {
-        email_address: req.body.email_address,
+        email: req.body.email_address,
         password: req.body.password
     }
 
     /* check if email exists on DB */
-    var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USER_TABLE} WHERE email_address=?`  /*Deberia devolver uno solo (1 cuenta por direccion de email) */
-    db.query(SQL_STATEMENT, [inputData.email_address], function (err, query_result, fields) {
+    var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USUARIO_TABLE} WHERE email=?`  /*Deberia devolver uno solo (1 cuenta por direccion de email) */
+    db.query(SQL_STATEMENT, [inputData.email], function (err, query_result, fields) {
         if(err) throw err
         if (!(query_result.length > 0) || !validation(inputData.password)) {
             var msg = constants.INVALID_CREDENTIALS
@@ -35,7 +35,7 @@ router.post('/login', function(req, res, next) {
                      * 2. user email address
                      * */ 
                     req.session.loggedInUser = true
-                    req.session.emailAddress = inputData.email_address
+                    req.session.emailAddress = inputData.email
                     res.redirect('/user/dashboard');
                 } else {
                     var msg = constants.INVALID_CREDENTIALS
