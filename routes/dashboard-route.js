@@ -4,9 +4,11 @@ const db = require('../database')
 const bcrypt = require('bcrypt')
 const constants = require('../utils/constants')
 
+
 /* GET dashboard form */
 router.get('/dashboard', function(req, res, next) {
-    if (req.session.loggedInUser) {
+    console.log(req.session.loggedInUser);
+    if (req.session.loggedInUser) { 
         res.render('dashboard-form', { email: req.session.emailAddress })
     } else {
         res.redirect('/user/register')
@@ -15,24 +17,34 @@ router.get('/dashboard', function(req, res, next) {
 
 router.post('/dashboard', function(req, res, next) {
     if (req.session.loggedInUser) {
-        obtenerGruposDeUsuario(req.session.loggedInUser)
-        res.render('dashboard-form', { email: req.session.emailAddress }, groups)
+        userGroupsList = obtenerGruposDeUsuario(req.session.loggedInUser)
+        res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
 
     }
 });
 
 function obtenerGruposDeUsuario(emailUser) {
     SQL_STATEMENT = `SELECT nombreGrupo FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =?`;
-    // return result.get('nombreGrupo'); //Lista de Strings ["GrupoX","GRupoY","GrupoZ"]
-    db.query(SQL_STATEMENT, [req.session.emailAddress], function(err, query_result, fields) {
 
+    db.query(SQL_STATEMENT, [req.session.emailAddress], function(err, query_result, fields) {
+        var numberOfGroups = 0
+        var userGroupsList = []
+        if (query_result.length > 0) {
+            numberOfGroups = query_result.length
+            for (i = 0; i <= numberOfGroups - 1; i++) {
+                userGroupsList.push(query_result[i].nombreGrupo)
+                console.log("Aca entra")
+            }
+        }
+        console.log(userGroupsList)
+        return userGroupsList
     })
 
 }
 
-function obtenerRecursosGrupoUser(nombreGrupo, nombreUser) {
+// function obtenerRecursosGrupoUser(nombreGrupo, nombreUser) {
 
-}
+// }
 
 //   obtenerRecursosGrupoUser(nombreGrupo,userName){
 //     resultSet = SELECT * FROM UsuarioGrupo WHERE nombreUser = userName AND nombreGrupo = nombreGrupo;
