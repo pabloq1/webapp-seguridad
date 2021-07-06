@@ -3,26 +3,15 @@ const router = express.Router()
 const db = require('../database')
 const bcrypt = require('bcrypt')
 const constants = require('../utils/constants')
-const utils = require('../utils/utils')
-global.userGroupsList = []
+const utils = require('../utils/utils');
+const { query } = require('../database')
+
 
 router.get('/', function(req, res, next) {
     obtainUserGroups(req, res)
 })
 
-// router.post('/dashboard', function(req, res, next) {
-//     if (req.session.loggedInUser) {
-//         inputData = {
-//             groupName: req.body.groupName,
-//             emailAddressNewUser: req.body.emailAddressNewUser,
-//             role: req.body.role
-//         }
-//         utils.addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
-//     }
-// });
-
 router.get('/group', function(req, res, next) {
-
     if (req.session.loggedInUser) {
         res.render('group-form', {groupName: req.body.action})
     } else {
@@ -30,35 +19,115 @@ router.get('/group', function(req, res, next) {
     }
 });
 
-// router.post('/group', function(req, res, next) {
-//     if (req.session.loggedInUser) {
-//         inputData = {
-//             groupName: req.body.groupName,
-//             emailAddressNewUser: req.body.emailAddressNewUser,
-//             role: req.body.role
-//         }
-//         utils.addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
-//     }
-// });
+router.post('/group', function(req, res, next) {
+     if (req.session.loggedInUser) {
+         inputData = {
+            groupName: req.body.group_name
+         }
+        obtenerPermisosGrupoUser(req, res, inputData.groupName)
+        obtenerRecursosGrupoUser(req, res, inputData.groupName)
+        // addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
+   }
+});
+
+/* ------------------------------------------------------------------ */
 
 const obtainUserGroups = function(req, res) {
     if (req.session.loggedInUser) {
         SQL_STATEMENT = `SELECT nombreGrupo FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =?`;
-
+        var userGroupsList = []
         db.query(SQL_STATEMENT, [req.session.emailAddress], function(err, query_result, fields) {
             var numberOfGroups = 0
             if (query_result.length > 0) {
                 numberOfGroups = query_result.length
                 for (i = 0; i <= numberOfGroups - 1; i++) {
-                    global.userGroupsList.push(query_result[i].nombreGrupo)
+                    userGroupsList.push(query_result[i].nombreGrupo)
                 }
             }
-            res.render('dashboard-form', { email: req.session.emailAddress, groups: global.userGroupsList })
+            res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
         })
     } else {
         res.redirect('/user/register')
     }
+};
+
+const obtenerPermisosGrupoUser = function(req, res, groupName) {
+    if (req.session.loggedInUser) {
+        SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =?`;
+        var permisos;
+        db.query(SQL_STATEMENT, [req.session.emailAddress, groupName], function(err, query_result, fields) {
+            if (query_result.length > 0) {
+                permisos = {
+                    "agrega": query_result[0].agrega,
+                    "lee": query_result[0].lee,
+                    "escribe": query_result[0].escribe
+                }
+            }
+        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName})
+    })
+    }
 }
+
+const obtenerRecursosGrupoUser = function(req,res, groupName) {
+    if (req.session.loggedInUser) {
+        SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser = ? AND nombreGrupo = ?`;
+        db.query(SQL_STATEMENT,[req.session.emailAddress, groupName], function(err,query_result,fields) {
+            if(query_result.length > 0) {
+                SQL_STATEMENT = `SELECT nombreRecurso FROM ${process.env.DB_RECURSO_TABLE} WHERE grupo = ?`;
+                db.query(SQL_STATEMENT, [groupName], function(err,query_result,fields){
+                    var nombresRecursos = []
+                    if(query_result.length > 0){
+                        for (elem in query_result) {
+                            nombresRecursos.push(elem.nombreRecurso)
+                        }
+                        var msg = "Tiene Recursos"
+                        res.render('group-form', { msg: msg, recursos: nombresRecursos })
+                    } else {
+                        var msg = "El grupo no tiene Recursos"
+                        res.render('group-form', { msg: msg })
+                    }
+                })
+            }
+        })
+    }
+}
+
+const addPersonToGroup = function(groupName, emailAddressNewUser, role) {
+    SQL_CHECK_ADMIN = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =? AND agregar =?`
+    SQL_ADD_NEW_MEMBER = ""
+    new_member_input = {
+            email: emailAddressNewUser,
+            nombreGrupo: groupName,
+            agrega: false,
+            escribe: true,
+            lee: true
+        }
+        // chequeo si soy el admin del grupo
+    db.query(SQL_CHECK_ADMIN, [req.session.emailAddress, groupName, true], function(err, query_result, fields) {
+        if (query_result.length > 0) {
+            // tengo permiso de agregar
+            switch (role) {
+                case "Miembro":
+                    SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
+                    utils.addMember(SQL_ADD_NEW_MEMBER, new_member_input)
+                        // MOSTRAR ALGUN MENSAJE?
+                    break;
+                case "Administrador":
+                    new_member_input.agrega = true
+                    SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
+                    utils.addMember(SQL_ADD_NEW_MEMBER, new_member_input)
+                    break;
+                default:
+                    console.log("NO MEMBER")
+            }
+        }
+    })
+};
+
+
+
+
+
 
 
 // // Un Usuario Administrador de Grupo agrega a un Usuario al Grupo especificando si es Miembro o Administrador

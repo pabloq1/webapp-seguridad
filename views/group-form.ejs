@@ -2,10 +2,87 @@
 <html>
   <head>
     <title>Group</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        li {
+            float: left;
+        }
+        
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        li a:hover {
+            background-color: #111;
+        }
+        
+        .btn-block {
+            margin-top: 10px;
+            text-align: center;
+            max-width: 10%;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px 0;
+            margin: 10px auto;
+            border-radius: 5px;
+            border: none;
+            background: #74c58f;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .bloque {
+            margin-left: 30px;
+            color:#74c58f;
+        }
+
+        .columnas {
+            display: inline-block;
+            margin: 0 10px;
+            margin-left: 30px;
+            color:#74c58f;
+        }
+    </style>
   </head>
-  <body>
-    <h1><%= groupName %> PAGE !</h1>
-    <p>Funciona!</p>
+  <body >
+    <ul>
+      <li>
+          <a class="active">
+              <%= email %>
+          </a>
+      </li>
+      <li ><a href="/user/dashboard">Back to dashboard</a></li>
+      <li ><a href="/user/logout">Logout</a></li>
+  </ul>
+  <div class="bloque">
+    <h1>Group Name: <%= groupname %></h1>
+      <div class="btn-block">
+
+        <% if(permisos["agrega"]==1) {%>
+          <button>agregar usuario </button>  
+        <% }%>
+        <% if (permisos["lee"]==1) {%>
+          <button>leer</button>
+        <% }%>  
+        <% if (permisos["escribe"]==1) {%>
+          <button>escribir</button>  
+        <% }%>
+    </div>
+  </div>
   </body>
 </html>

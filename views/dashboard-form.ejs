@@ -45,6 +45,18 @@
             font-weight: 600;
             color: #fff;
         }
+
+        .bloque {
+            margin-left: 30px;
+            color:#74c58f;
+        }
+
+        .columnas {
+            display: inline-block;
+            margin: 0 10px;
+            margin-left: 30px;
+            color:#74c58f;
+        }
     </style>
 </head>
 
@@ -55,13 +67,26 @@
                 <%= email %>
             </a>
         </li>
-        <li><a href="/user/logout">Logout</a></li>
+        <li ><a href="/user/logout">Logout</a></li>
     </ul>
-    <div class="btn-block">
-        <form method="POST" action="#">
+    <div class="btn-block columnas">
+        <% var lista = [] %>
         <% for (var i = 0; i < groups.length ; i++) { %>
-            <button type="submit" value="${groups[i]}"  name="action"><a href='dashboard/group'> <%= groups[i] %> </a></button>
+            <% if (!lista.includes(groups[i])) {%>
+                <% lista.push(groups[i]) %>
             <% } %>
+        <% } %>
+        <% for (var i = 0; i < lista.length ; i++) { %>
+            <button><%= lista[i] %></button>  
+        <% } %>
+    </div>
+    <div class="bloque">
+        <form method="post" action="dashboard/group">
+            <h3>Elija un grupo al cual acceder:</h3>
+            <input type="text" style="padding: 10px; text-transform: uppercase;" name="group_name" placeholder="Nombre del grupo"/>
+            <div class="btn-block" style = "max-width: 12%;">
+                <button type="submit" href="/group">Submit</button>
+            </div>
         </form>
     </div>
 </body>

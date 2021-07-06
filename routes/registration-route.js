@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database');
-const validation = require('../utils/utils')
+const utils = require('../utils/utils');
 const bcrypt = require('bcrypt');
-const saltRounds = parseInt(`${process.env.SALT}`)
+const saltRounds = parseInt(`${process.env.SALT}`);
 const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
 const constants = require('../utils/constants')
 
@@ -55,7 +55,7 @@ router.post('/register', function(req, res, next) {
                 alertMsg: msg,
                 passwordInfo: constants.PASSWORD_CHARACTERS
             });
-        } else if (!validation(inputUserData.password)) {
+        } else if (!utils.passwordValidation(inputUserData.password)) {
             var msg = constants.PASSWORD_FORMAT
             res.render('registration-form', {
                 alertMsg: msg,

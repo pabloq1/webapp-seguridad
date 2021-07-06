@@ -21,7 +21,7 @@ router.post('/login', function(req, res, next) {
     var SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USUARIO_TABLE} WHERE email=?`
     db.query(SQL_STATEMENT, [inputData.email], function(err, query_result, fields) {
         if (err) throw err
-        if (!(query_result.length > 0) || !validation(inputData.password)) {
+        if (!(query_result.length > 0)) {
             var msg = constants.INVALID_CREDENTIALS
             res.render('login-form', { alertMsg: msg, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
         } else {
