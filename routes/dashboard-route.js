@@ -9,7 +9,6 @@ const constants = require('../utils/constants')
 router.get('/dashboard', function(req, res, next) {
     console.log(req.session.loggedInUser);
     if (req.session.loggedInUser) {
-        //res.render('dashboard-form', { email: req.session.emailAddress })
         userGroupsList = obtenerGruposDeUsuario(req.session.emailAddress)
         res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
     } else {
@@ -19,9 +18,7 @@ router.get('/dashboard', function(req, res, next) {
 
 router.post('/dashboard', function(req, res, next) {
     if (req.session.loggedInUser) {
-        // userGroupsList = obtenerGruposDeUsuario(req.session.loggedInUser)
         res.render('dashboard-form', { email: req.session.emailAddress })
-
     }
 });
 
@@ -40,11 +37,62 @@ function obtenerGruposDeUsuario(emailAddress) {
         return userGroupsList
     })
 
+    function addPersonToGroup(groupName, emailAddressNewUser, role, req) {
+        SQL_CHECK_ADMIN = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =? AND agregar =?`
+        SQL_ADD_NEW_MEMBER = ""
+        new_member_input = {
+                email: emailAddressNewUser,
+                nombreGrupo: groupName,
+                agrega: false,
+                escribe: true,
+                lee: true
+            }
+            // chequeo si soy el admin del grupo
+        db.query(SQL_CHECK_ADMIN, [req.session.emailAddress, groupName, true], function(err, query_result, fields) {
+            if (query_result.length > 0) {
+                // tengo permiso de agregar
+                switch (role) {
+                    case "Miembro":
+                        SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
+                            // QUERY
+                        break;
+                    case "Administrador":
+                        new_member_input.agrega = true
+                        SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
+                        // QUERY
+                        break;
+                    default:
+                        SQL_ADD_NEW_MEMBER = ""
+                }
+            }
+        })
+    }
+
 }
 
-// function obtenerRecursosGrupoUser(nombreGrupo, nombreUser) {
+// // Un Usuario Administrador de Grupo agrega a un Usuario al Grupo especificando si es Miembro o Administrador
+// // Primero se chequea si ese Usuario tiene el permiso de Agregar en el Grupo especificado
+// agregarPersona(emailUser,nombreGrupo,emailNuevoUsuario,rol){
+//     //Chequeo si tengo esos permisos
+//     resultSoyAdmin = SELECT * FROM UsuarioGrupo WHERE nombreUser = emailUser AND nombreGrupo = nombreGrupo AND agregar = True;
+//     if(!resultSoyAdmin.empty){
+//       // Tengo el permiso de Agregar! :)
+//       if(rol='Miembro'){
+//         resultNuevoMiembro = INSERT INTO UsuarioGrupo VALUES (emailNuevoUsuario,nombreGrupo,'-',false,true,true);
+//         if(no devuelve error){
+//           return 'Nuevo Miembro agregado satisfactoriamente'
+//         }
+//       }if else(rol='Administrador'){
+//         resultNuevoAdmin = INSERT INTO UsuarioGrupo VALUES (emailNuevoUsuario,nombreGrupo,'-',true,true,true);
+//         if(no devuelve error){
+//           return 'Nuevo Administrador agregado satisfactoriamente'
+//         }
+//       }else{
+//         return 'Nombre de Rol equivocado'
+//       }
+//     }
+//   }
 
-// }
 
 //   obtenerRecursosGrupoUser(nombreGrupo,userName){
 //     resultSet = SELECT * FROM UsuarioGrupo WHERE nombreUser = userName AND nombreGrupo = nombreGrupo;
