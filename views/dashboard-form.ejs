@@ -58,9 +58,11 @@
         <li><a href="/user/logout">Logout</a></li>
     </ul>
     <div class="btn-block">
+        <form method="POST" action="#">
         <% for (var i = 0; i < groups.length ; i++) { %>
-            <button><a href='/dashboard/grupo %>'> <%= groups[i] %> </a></button>
+            <button type="submit" value="${groups[i]}"  name="action"><a href='dashboard/group'> <%= groups[i] %> </a></button>
             <% } %>
+        </form>
     </div>
 </body>
 

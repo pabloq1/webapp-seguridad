@@ -3,111 +3,63 @@ const router = express.Router()
 const db = require('../database')
 const bcrypt = require('bcrypt')
 const constants = require('../utils/constants')
+const utils = require('../utils/utils')
+global.userGroupsList = []
 
-router.get('/dashboard', function(req, res, next) {
+router.get('/', function(req, res, next) {
+    obtainUserGroups(req, res)
+})
+
+// router.post('/dashboard', function(req, res, next) {
+//     if (req.session.loggedInUser) {
+//         inputData = {
+//             groupName: req.body.groupName,
+//             emailAddressNewUser: req.body.emailAddressNewUser,
+//             role: req.body.role
+//         }
+//         utils.addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
+//     }
+// });
+
+router.get('/group', function(req, res, next) {
+
+    if (req.session.loggedInUser) {
+        res.render('group-form', {groupName: req.body.action})
+    } else {
+        res.redirect('/user/login')
+    }
+});
+
+// router.post('/group', function(req, res, next) {
+//     if (req.session.loggedInUser) {
+//         inputData = {
+//             groupName: req.body.groupName,
+//             emailAddressNewUser: req.body.emailAddressNewUser,
+//             role: req.body.role
+//         }
+//         utils.addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
+//     }
+// });
+
+const obtainUserGroups = function(req, res) {
     if (req.session.loggedInUser) {
         SQL_STATEMENT = `SELECT nombreGrupo FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =?`;
 
         db.query(SQL_STATEMENT, [req.session.emailAddress], function(err, query_result, fields) {
             var numberOfGroups = 0
-            var userGroupsList = []
             if (query_result.length > 0) {
                 numberOfGroups = query_result.length
                 for (i = 0; i <= numberOfGroups - 1; i++) {
-                    userGroupsList.push(query_result[i].nombreGrupo)
+                    global.userGroupsList.push(query_result[i].nombreGrupo)
                 }
             }
-            res.render('dashboard-form', { email: req.session.emailAddress, groups: userGroupsList })
+            res.render('dashboard-form', { email: req.session.emailAddress, groups: global.userGroupsList })
         })
     } else {
         res.redirect('/user/register')
     }
-});
+}
 
-router.post('/dashboard', function(req, res, next) {
-    if (req.session.loggedInUser) {
-        inputData = {
-            groupName: req.body.groupName,
-            emailAddressNewUser: req.body.emailAddressNewUser,
-            role: req.body.role
-        }
-        addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
-    }
-});
-
-router.get('/dashboard/grupo', function(req, res, next) {
-    console.log("gola")
-});
-
-router.post('/dashboard/grupo', function(req, res, next) {
-    if (req.session.loggedInUser) {
-        inputData = {
-            groupName: req.body.groupName,
-            emailAddressNewUser: req.body.emailAddressNewUser,
-            role: req.body.role
-        }
-        addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
-    }
-});
-
-
-
-
-
-function obtenerGruposDeUsuario(emailAddress) {
-    SQL_STATEMENT = `SELECT nombreGrupo FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =?`;
-
-    db.query(SQL_STATEMENT, [emailAddress], function(err, query_result, fields) {
-        var numberOfGroups = 0
-        var userGroupsList = []
-        if (query_result.length > 0) {
-            numberOfGroups = query_result.length
-            for (i = 0; i <= numberOfGroups - 1; i++) {
-                userGroupsList.push(query_result[i].nombreGrupo)
-            }
-        }
-        console.log(userGroupsList)
-        return userGroupsList
-    })
-};
-
-function addPersonToGroup(groupName, emailAddressNewUser, role) {
-    SQL_CHECK_ADMIN = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =? AND agregar =?`
-    SQL_ADD_NEW_MEMBER = ""
-    new_member_input = {
-            email: emailAddressNewUser,
-            nombreGrupo: groupName,
-            agrega: false,
-            escribe: true,
-            lee: true
-        }
-        // chequeo si soy el admin del grupo
-    db.query(SQL_CHECK_ADMIN, [req.session.emailAddress, groupName, true], function(err, query_result, fields) {
-        if (query_result.length > 0) {
-            // tengo permiso de agregar
-            switch (role) {
-                case "Miembro":
-                    SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
-                    addMember(SQL_ADD_NEW_MEMBER, new_member_input)
-                        // MOSTRAR ALGUN MENSAJE?
-                    break;
-                case "Administrador":
-                    new_member_input.agrega = true
-                    SQL_ADD_NEW_MEMBER = `INSERT INTO ${process.env.DB_USUARIO_GRUPO_TABLE} SET ?`
-                    addMember(SQL_ADD_NEW_MEMBER, new_member_input)
-                    break;
-                default:
-                    console.log("NO MEMBER")
-            }
-        }
-    })
-};
-
-const addMember = function(query, input) {
-    db.query(query, [input], function(err, query_result) {
-        if (err) throw err
-    })
-};
 
 // // Un Usuario Administrador de Grupo agrega a un Usuario al Grupo especificando si es Miembro o Administrador
 // // Primero se chequea si ese Usuario tiene el permiso de Agregar en el Grupo especificado

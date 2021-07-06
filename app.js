@@ -44,7 +44,7 @@ app.use('/user', indexRouter)
 app.use('/user', usersRouter)
 app.use('/user', registrationRouter)
 app.use('/user', loginRouter)
-app.use('/user', dashboardRouter)
+app.use('/user/dashboard', dashboardRouter)
 app.use('/user', logoutRouter)
 
 // catch 404 and forward to error handler
