@@ -25,7 +25,7 @@ router.post('/group', function(req, res, next) {
             groupName: req.body.group_name
          }
         obtenerPermisosGrupoUser(req, res, inputData.groupName)
-        obtenerRecursosGrupoUser(req, res, inputData.groupName)
+        //obtenerRecursosGrupoUser(req, res, inputData.groupName)
         // addPersonToGroup(inputData.groupName, inputData.emailAddressNewUser, inputData.role)
    }
 });
@@ -61,14 +61,34 @@ const obtenerPermisosGrupoUser = function(req, res, groupName) {
                     "agrega": query_result[0].agrega,
                     "lee": query_result[0].lee,
                     "escribe": query_result[0].escribe
-                }
+                }  
+                SQL_STATEMENT_RECURSOS = `SELECT nombreRecurso FROM ${process.env.DB_RECURSO_TABLE} WHERE grupo = ?`;
+                db.query(SQL_STATEMENT_RECURSOS, [groupName], function(err,query_result,fields){
+                    var nombresRecursos = []
+                    console.log(query_result)
+                    if(query_result.length > 0){
+                        for (var i = 0; i < query_result.length; i++) {
+                            var elem = query_result[i]
+                            nombresRecursos.push(elem.nombreRecurso)
+                        }                        
+                        var msg = "Tiene Recursos"
+                        console.log(msg)
+                        
+                        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: nombresRecursos })
+                    } else {
+                        var msg = "El grupo no tiene Recursos"
+                        console.log(msg)
+                        res.render('group-form', { msg: msg, email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: nombresRecursos })
+                    }
+                })
             }
-        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName})
-    })
+        })
+    } else {
+        res.redirect('/user/register')
     }
 }
 
-const obtenerRecursosGrupoUser = function(req,res, groupName) {
+/* const obtenerRecursosGrupoUser = function(req,res, groupName) {
     if (req.session.loggedInUser) {
         SQL_STATEMENT = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser = ? AND nombreGrupo = ?`;
         db.query(SQL_STATEMENT,[req.session.emailAddress, groupName], function(err,query_result,fields) {
@@ -81,16 +101,18 @@ const obtenerRecursosGrupoUser = function(req,res, groupName) {
                             nombresRecursos.push(elem.nombreRecurso)
                         }
                         var msg = "Tiene Recursos"
-                        res.render('group-form', { msg: msg, recursos: nombresRecursos })
+                        console.log(msg)
+                        res.render('group-form', { msg: msg, email: req.session.emailAddress, groupname: groupName, recursos: nombresRecursos })
                     } else {
                         var msg = "El grupo no tiene Recursos"
+                        console.log(msg)
                         res.render('group-form', { msg: msg })
                     }
                 })
             }
         })
     }
-}
+} */
 
 const addPersonToGroup = function(groupName, emailAddressNewUser, role) {
     SQL_CHECK_ADMIN = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =? AND agregar =?`
