@@ -1,4 +1,5 @@
-const password_validation = function(password) {
+/* PASSWORD */
+const passwordValidation = function(password) {
     const numeric_characters = /[0-9]/;
     const special_characters = /[#?!@$%^&*\-_\\\/]/;
     const capital_letters = /[A-Z]/;
@@ -8,4 +9,4 @@ const password_validation = function(password) {
             password.length >= 8;
    };
 
-module.exports = password_validation;
+exports.passwordValidation = passwordValidation

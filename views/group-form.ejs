@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Group</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        li {
+            float: left;
+        }
+        
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        li a:hover {
+            background-color: #111;
+        }
+
+        .btn-block {
+            margin-top: 10px;
+            margin-left: 20px;
+            text-align: center;
+            max-width: 20%;
+            display:inline-block;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px 0;
+            margin: 10px auto;
+            border-radius: 5px;
+            border: none;
+            background: #74c58f;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .bloque {
+            margin-left: 30px;
+            color:#636965;
+        }
+
+        .columnas {
+            display: inline-block;
+            margin: 0 10px;
+            margin-left: 30px;
+            color:#74c58f;
+        }
+
+      h2.double:before { 
+          /* this is just to undo the :before styling from above */
+          border-top: none; 
+      }
+
+      h2.double:after {
+          border-bottom: 1px solid blue;
+          -webkit-box-shadow: 0 1px 0 0 red;
+          -moz-box-shadow: 0 1px 0 0 red;
+          box-shadow: 0 1px 0 0 red;
+          content: "";
+          margin: 0 auto; /* this centers the line to the full width specified */
+          position: absolute;
+          top: 45%; left: 0; right: 0;
+          width: 95%;
+          z-index: -1;
+      }
+      h2 {
+      font: 33px sans-serif;
+      margin-top: 30px;
+      text-align: center;
+      }
+    </style>
+  </head>
+  <body >
+    <ul>
+      <li>
+          <a class="active">
+              <%= email %>
+          </a>
+      </li>
+      <li ><a href="/user/dashboard">Back to dashboard</a></li>
+      <li ><a href="/user/logout">Logout</a></li>
+  </ul>
+  <div class="bloque">
+    <h1>Group Name: <%= groupname %></h1>
+      <div class="btn-block">
+        <% if(typeof permisos!='undefined') {%>
+          <% if(permisos["agrega"]==1) {%>
+            <button type="button" data-target="#div1">agregar usuario </button>  
+          <% }%>
+          <% if (permisos["lee"]==1) {%>
+            <button type="button" data-target="#div2">leer</button>
+          <% }%>  
+          <% if (permisos["escribe"]==1) {%>
+            <button type="button" data-target="#div3">escribir</button>  
+          <% }%>
+        <% }%>
+      </div>
+        <div style="margin-left: 28px;"> 
+            <br>
+            <br>
+          <div id="div1" style="text-align: center;">
+            <form method="post" action="/user/dashboard/group/confirmation">   
+            <h2 class="background"><span>Escriba el usuario a agregar:</span></h2>
+              <input  style="padding: 5px;" type="text" name="email_address" id="email_address" placeholder="Email" required/>
+              <p class ="margin-top: 5px;">
+              <div class="option">
+                <input type="radio" value="Administrador" id="Administrador" name="option" checked/>
+                <label for="Administrador" class="radio">Administrador</label>
+        
+                <input type="radio" value="Miembro" id="Miembro" name="option" />
+                <label for="Miembro" class="radio">Miembro</label>
+              </div>
+              <p><small> <%= (typeof msg!='undefined') ? msg:'' %> </small></p>
+              <button type="submit" href="/" style= "padding-left: 10px; max-width: 17%; padding-top: 5px;">agregar</button>
+            </form>
+          </div>
+
+          <div id="div2" style="text-align: center;">
+            <h2 class="background"><span>Recursos Disponibles:</span></h2>
+            <% var lista = [] %>
+            <% if(typeof permisos!='undefined') {%>
+              <% if(recursos.length != 0) {%>
+                  <% for (var i = 0; i < recursos.length ; i++) { %>
+                      <% if (!lista.includes(recursos[i])) {%>
+                          <% lista.push(recursos[i]) %>
+                      <% } %> 
+                  <% } %>
+                  <% for (var i = 0; i < lista.length ; i++) { %>
+                      <h3 class="margin-left: 30px;"> ✦ <%= lista[i] %></h3>  
+                  <% } %>
+              <% } %>
+              <% }%>
+            <% if(lista.length == 0){%>
+                <h3 class="margin-left: 30px;"> El grupo no tiene recursos</h3>  
+            <% } %>  
+          </div>
+          <div id="div3" style="text-align: center;">
+            <form action="/user/dashboard/group/write" method="post">
+              <h2 class="background"><span>Escriba un texto:</span></h2><br />
+              <p class="background">Nombre del archivo:</p><br />
+              <input type="text" name="nombre" required/>
+              <p class="background">Texto:</p>
+              <textarea name="contenido">
+              </textarea><br />
+              <input type="submit" value="Enviar" />
+              </form>
+          </div>
+        </div>
+  </div>
+  <script>
+    $('#div1').hide();
+    $('#div2').hide();
+    $('#div3').hide();
+    $(document).on('click', 'button', e => {
+    $($(e.target).data('target')).toggle();
+    });
+  </script>
+  </body>
+</html>
