@@ -10,11 +10,7 @@ const passwordValidation = function(password) {
    };
 
 /* DATABASE */
-const addMember = function(query, input) {
-    db.query(query, [input], function(err, query_result) {
-        if (err) throw err
-    })
-};
+
 
 const addPersonToGroup = function(groupName, emailAddressNewUser, role) {
     SQL_CHECK_ADMIN = `SELECT * FROM ${process.env.DB_USUARIO_GRUPO_TABLE} WHERE nombreUser =? AND nombreGrupo =? AND agregar =?`
@@ -50,4 +46,3 @@ const addPersonToGroup = function(groupName, emailAddressNewUser, role) {
 
 //module.exports = password_validation, addMember, obtainUserGroups, addPersonToGroup;
 exports.passwordValidation = passwordValidation
-exports.addMember = addMember

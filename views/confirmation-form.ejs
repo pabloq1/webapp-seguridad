@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Confirmation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+        
+        li {
+            float: left;
+        }
+        
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        li a:hover {
+            background-color: #111;
+        }
+
+        .btn-block {
+            margin-top: 10px;
+            margin-left: 20px;
+            text-align: center;
+            max-width: 20%;
+            display:inline-block;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px 0;
+            margin: 10px auto;
+            border-radius: 5px;
+            border: none;
+            background: #74c58f;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .bloque {
+            margin-left: 30px;
+            color:#636965;
+        }
+
+        .columnas {
+            display: inline-block;
+            margin: 0 10px;
+            margin-left: 30px;
+            color:#74c58f;
+        }
+
+      h2.double:before { 
+          /* this is just to undo the :before styling from above */
+          border-top: none; 
+      }
+
+      h2.double:after {
+          border-bottom: 1px solid blue;
+          -webkit-box-shadow: 0 1px 0 0 red;
+          -moz-box-shadow: 0 1px 0 0 red;
+          box-shadow: 0 1px 0 0 red;
+          content: "";
+          margin: 0 auto; /* this centers the line to the full width specified */
+          position: absolute;
+          top: 45%; left: 0; right: 0;
+          width: 95%;
+          z-index: -1;
+      }
+      h2 {
+      font: 33px sans-serif;
+      margin-top: 30px;
+      text-align: center;
+      }
+    </style>
+  </head>
+  <body >
+    <ul>
+      <li>
+          <a class="active">
+              <%= email %>
+          </a>
+      </li>
+      <li ><a href="/user/dashboard">Back to dashboard</a></li>
+      <li ><a href="/user/logout">Logout</a></li>
+  </ul>
+  <div class="bloque" style="padding-top: 20px;">
+    <h1><%= (typeof msg!='undefined') ? msg:'' %> </h1>
+  </div>
+  </body>
+</div>

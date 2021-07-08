@@ -22,8 +22,7 @@ router.post('/login', function(req, res, next) {
     db.query(SQL_STATEMENT, [inputData.email], function(err, query_result, fields) {
         if (err) throw err
         if (!(query_result.length > 0)) {
-            var msg = constants.INVALID_CREDENTIALS
-            res.render('login-form', { alertMsg: msg, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
+            res.render('login-form', { alertMsg: constants.INVALID_CREDENTIALS, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
         } else {
             bcrypt.compare(inputData.password, query_result[0].password, (err, data) => {
                 if (err) throw err
@@ -37,8 +36,7 @@ router.post('/login', function(req, res, next) {
                     req.session.emailAddress = inputData.email
                     res.redirect('/user/dashboard');
                 } else {
-                    var msg = constants.INVALID_CREDENTIALS
-                    res.render('login-form', { alertMsg: msg, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
+                    res.render('login-form', { alertMsg: constants.INVALID_CREDENTIALS, userLogin: constants.USER_LOGIN, newRegistration: constants.NEW_REGISTRATION });
                 }
             })
         }

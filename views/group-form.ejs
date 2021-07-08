@@ -97,25 +97,34 @@
   <div class="bloque">
     <h1>Group Name: <%= groupname %></h1>
       <div class="btn-block">
-
-        <% if(permisos["agrega"]==1) {%>
-          <button type="button" data-target="#div1">agregar usuario </button>  
-        <% }%>
-        <% if (permisos["lee"]==1) {%>
-          <button type="button" data-target="#div2">leer</button>
-        <% }%>  
-        <% if (permisos["escribe"]==1) {%>
-          <button type="button" data-target="#div3">escribir</button>  
+        <% if(typeof permisos!='undefined') {%>
+          <% if(permisos["agrega"]==1) {%>
+            <button type="button" data-target="#div1">agregar usuario </button>  
+          <% }%>
+          <% if (permisos["lee"]==1) {%>
+            <button type="button" data-target="#div2">leer</button>
+          <% }%>  
+          <% if (permisos["escribe"]==1) {%>
+            <button type="button" data-target="#div3">escribir</button>  
+          <% }%>
         <% }%>
       </div>
         <div style="margin-left: 28px;"> 
             <br>
             <br>
           <div id="div1" style="text-align: center;">
-            <form method="post" action="/dashboard/group/agregarUsuario">   
+            <form method="post" action="/user/dashboard/group/confirmation">   
             <h2 class="background"><span>Escriba el usuario a agregar:</span></h2>
               <input  style="padding: 5px;" type="text" name="email_address" id="email_address" placeholder="Email" required/>
-              <p class ="margin-top: 5px;"><small> <%= (typeof alertMsg!='undefined' )? alertMsg:'' %> </small></p>
+              <p class ="margin-top: 5px;">
+              <div class="option">
+                <input type="radio" value="Administrador" id="Administrador" name="option" checked/>
+                <label for="Administrador" class="radio">Administrador</label>
+        
+                <input type="radio" value="Miembro" id="Miembro" name="option" />
+                <label for="Miembro" class="radio">Miembro</label>
+              </div>
+              <p><small> <%= (typeof msg!='undefined') ? msg:'' %> </small></p>
               <button type="submit" href="/" style= "padding-left: 10px; max-width: 17%; padding-top: 5px;">agregar</button>
             </form>
           </div>
@@ -123,16 +132,18 @@
           <div id="div2" style="text-align: center;">
             <h2 class="background"><span>Recursos Disponibles:</span></h2>
             <% var lista = [] %>
-            <% if(recursos.length != 0) {%>
-                <% for (var i = 0; i < recursos.length ; i++) { %>
-                    <% if (!lista.includes(recursos[i])) {%>
-                        <% lista.push(recursos[i]) %>
-                    <% } %>
-                <% } %>
-                <% for (var i = 0; i < lista.length ; i++) { %>
-                    <h3 class="margin-left: 30px;"> ✦ <%= lista[i] %></h3>  
-                <% } %>
-            <% } %>
+            <% if(typeof permisos!='undefined') {%>
+              <% if(recursos.length != 0) {%>
+                  <% for (var i = 0; i < recursos.length ; i++) { %>
+                      <% if (!lista.includes(recursos[i])) {%>
+                          <% lista.push(recursos[i]) %>
+                      <% } %> 
+                  <% } %>
+                  <% for (var i = 0; i < lista.length ; i++) { %>
+                      <h3 class="margin-left: 30px;"> ✦ <%= lista[i] %></h3>  
+                  <% } %>
+              <% } %>
+              <% }%>
             <% if(lista.length == 0){%>
                 <h3 class="margin-left: 30px;"> El grupo no tiene recursos</h3>  
             <% } %>  
