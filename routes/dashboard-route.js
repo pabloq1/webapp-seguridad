@@ -1,15 +1,24 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../database')
-const bcrypt = require('bcrypt')
 const constants = require('../utils/constants')
-const utils = require('../utils/utils');
 const { query } = require('../database')
 const { Router } = require('express')
+const NodeRSA = require('node-rsa');
+const key = new NodeRSA({ b: 1024 });
 
+const key_private = new NodeRSA(process.env.PRIVATE_KEY)
 
 router.get('/', function(req, res, next) {
     obtainUserGroups(req, res)
+})
+
+router.get('/group/write', function(req, res, next) {
+    if (req.session.loggedInUser) {
+        obtainUserGroups(req, res)
+    } else {
+        res.redirect('/user/login')
+    }
 })
 
 router.get('/group', function(req, res, next) {
@@ -23,18 +32,62 @@ router.get('/group', function(req, res, next) {
 router.post('/group', function(req, res, next) {
      if (req.session.loggedInUser) {
         req.session.groupName = req.body.group_name
-        console.log(`EL GROUP NAME SESSION ES ${ req.session.groupName } `)
         obtenerPermisosGrupoUser(req, res, req.body.group_name)
-   }
+   } else {
+        res.redirect('/user/register')
+    }
 });
 
 router.post('/group/confirmation', function(req, res, next) {
     if (req.session.loggedInUser) {
         addPersonToGroup(req, res, req.session.emailAddress, req.session.groupName, req.body.email_address, req.body.option)
+    } else {
+        res.redirect('/user/register')
     }
 });
 
+router.post('/group/write', function(req, res, next) {
+    if (req.session.loggedInUser) {
+        var SQL_PUBLIC_KEY = `SELECT clavePub FROM ${ process.env.DB_USUARIO_TABLE } WHERE email =?`;
+        db.query(SQL_PUBLIC_KEY, [req.session.emailAddress], function(err, query_result, fields) {
+            if (err) throw err
+            if (query_result.length > 0) {
+                const key_public = new NodeRSA(query_result[0].clavePub)
+                inputRecurso = {
+                    nombre: req.body.nombre,
+                    contenido: key_public.encrypt(req.body.contenido, 'base64'),
+                    grupo: req.session.groupName
+                }
+                uploadFile(req, res, inputRecurso)
+            }
+        })
+    } else {
+        res.redirect('/user/register')
+    }
+  });
+
+
 /* ------------------------------------------------------------------ */
+
+const uploadFile = function(req, res, recurso){
+    if (req.session.loggedInUser) {
+        SQL_STATEMENT = `SELECT * FROM ${ process.env.DB_USUARIO_GRUPO_TABLE } WHERE nombreUser =? AND nombreGrupo =? AND agrega =?`;
+        db.query(SQL_STATEMENT, [req.session.emailAddress, req.session.groupName, true], function(err, query_result, fields) {
+            if (err) throw err
+            if (query_result.length > 0) {
+                SQL_STATEMENT_RECURSO = `INSERT INTO ${ process.env.DB_RECURSO_TABLE } SET ?`; 
+                db.query(SQL_STATEMENT_RECURSO, [recurso], function(err, query_result, fields){
+                    if (err) throw err
+                    res.render('confirmation-form', {msg: `Se subió el archivo ${recurso.nombre} con éxito`, email: req.session.emailAddress})
+               })     
+            } else{
+                res.render('confirmation-form', {msg: `No se pudo subir el archivo`, email: req.session.emailAddress})
+            }
+        })
+    } else {
+        res.redirect('/user/register')
+    }
+}
 
 const obtainUserGroups = function(req, res) {
     if (req.session.loggedInUser) {
@@ -68,21 +121,25 @@ const obtenerPermisosGrupoUser = function(req, res, groupName) {
                     "lee": query_result[0].lee,
                     "escribe": query_result[0].escribe
                 }  
-                SQL_STATEMENT_RECURSOS = `SELECT nombreRecurso FROM ${ process.env.DB_RECURSO_TABLE } WHERE grupo = ?`;
-                db.query(SQL_STATEMENT_RECURSOS, [groupName], function(err,query_result,fields){
+                SQL_STATEMENT_RECURSOS = `SELECT * FROM ${ process.env.DB_RECURSO_TABLE } WHERE grupo = ?`;
+                db.query(SQL_STATEMENT_RECURSOS, [groupName], function(err, query_result, fields){
                     if (err) throw err
                     var nombresRecursos = []
-                    console.log(query_result)
+                    var contenidos = []
                     if(query_result.length > 0){
                         for (var i = 0; i < query_result.length; i++) {
                             var elem = query_result[i]
-                            nombresRecursos.push(elem.nombreRecurso)
+                            nombresRecursos.push(elem.nombre)
+                            contenidos.push(elem.contenido)
                         }                        
-                        console.log(constants.HAS_RESOURCES)
-                        
-                        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: nombresRecursos })
+
+                        for (var i = 0; i < contenidos.length; i++) {
+                            var desencriptado = key_private.decrypt(contenidos[i], 'utf8')
+                            contenidos[i] = desencriptado
+                        }
+                        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: contenidos })
                     } else {
-                        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: nombresRecursos })
+                        res.render('group-form', { email: req.session.emailAddress, permisos: permisos, groupname: groupName, recursos: contenidos })
                     }
                 })
             }
@@ -91,10 +148,6 @@ const obtenerPermisosGrupoUser = function(req, res, groupName) {
         res.redirect('/user/register')
     }
 }
-
-function isEmpty(obj) {
-    return !Object.keys(obj).length > 0;
-  }
 
 const addPersonToGroup = function(req, res, emailAddress, groupName, emailAddressNewUser, role) {
     SQL_CHECK_ADMIN = `SELECT * FROM ${ process.env.DB_USUARIO_GRUPO_TABLE } WHERE nombreUser =? AND nombreGrupo =? AND agrega =?`
@@ -126,6 +179,7 @@ const addPersonToGroup = function(req, res, emailAddress, groupName, emailAddres
             }
         }
     })
+    
 };
 
 const addMember = function(req, res, query, input) {
@@ -144,19 +198,5 @@ const addMember = function(req, res, query, input) {
 };
 
 
-//   subirArchivo(emailUser,nombreGrupo, archivo,nombreRecurso){
-//     // Ver como es mandar un MEDIUMBLOB a la DB y como tomarlo desde la Web
-//     resultSet = SELECT * FROM UsuarioGrupo WHERE nombreUser = emailUser, nombreGrupo = nombreGrupo , agregar = True;
-//     if(!resultSet.empty){
-//       Date fecha = Date.now() // ver en javascript
-//       query = INSERT INTO Recurso(nombreRecurso, fecha.ToString , nombreGrupo , archivo)
-//       resultadoInsert = conn.ejecutarQuery(query)
-//       if(resultadoInsert exitoso){
-//         return 'Archivo agregado satisfactoriamente'
-//       }else{
-//         return 'Ha ocurrido un problema'
-//       }
-//     }
-//   }
 
 module.exports = router;

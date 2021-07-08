@@ -19,6 +19,7 @@
     "jquery": "^3.6.0",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
+    "node-rsa": "^1.1.1",
     "sql-injection": "^0.0.6",
     "uuid": "^8.3.2"
   }

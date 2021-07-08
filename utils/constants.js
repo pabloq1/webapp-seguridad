@@ -1,6 +1,5 @@
 module.exports = {
   
-  
     /* UI MESSAGES */
     INVALID_CREDENTIALS: "The username or password you entered is incorrect.",
     OTHER_EMAIL: "Try a different email address.",
@@ -24,3 +23,5 @@ module.exports = {
     WRITE: "Escribe",
     READ: "Lee"
   };
+
+

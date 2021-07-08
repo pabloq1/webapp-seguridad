@@ -4,15 +4,12 @@ const db = require('../database');
 const utils = require('../utils/utils');
 const bcrypt = require('bcrypt');
 const saltRounds = parseInt(`${process.env.SALT}`);
-const myPlaintextPassword = `${process.env.PLAIN_PASS}`;
 const constants = require('../utils/constants')
 
-/* GET registration form */
 router.get('/register', function(req, res, next) {
     res.render('registration-form', { registration: constants.REGISTRATION });
 });
 
-/* USER INPUT */
 router.post('/register', function(req, res, next) {
     inputUserData = {
         name: req.body.first_name,
@@ -28,7 +25,6 @@ router.post('/register', function(req, res, next) {
     }
 
     inputGroupUserData = {
-        // emailUsuario,nombreGrupo,'-',true,true,true
         nombreUser: req.body.email_address,
         nombreGrupo: req.body.group_name,
         agrega: true,
@@ -36,7 +32,6 @@ router.post('/register', function(req, res, next) {
         lee: true
     }
 
-    /* DATABASE */
     var sql_email = `SELECT * FROM ${process.env.DB_USUARIO_TABLE} WHERE email =?`;
     var sql_group = `SELECT * FROM ${process.env.DB_GRUPO_TABLE} WHERE nombreGrupo =?`;
 
@@ -98,5 +93,4 @@ router.post('/register', function(req, res, next) {
         }
     })
 });
-module.exports = router;
 module.exports = router;

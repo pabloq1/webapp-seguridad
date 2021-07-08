@@ -149,9 +149,12 @@
             <% } %>  
           </div>
           <div id="div3" style="text-align: center;">
-            <form action="/html/tags/html_form_tag_action.cfm" method="post">
+            <form action="/user/dashboard/group/write" method="post">
               <h2 class="background"><span>Escriba un texto:</span></h2><br />
-              <textarea name="comments" id="comments">
+              <p class="background">Nombre del archivo:</p><br />
+              <input type="text" name="nombre" required/>
+              <p class="background">Texto:</p>
+              <textarea name="contenido">
               </textarea><br />
               <input type="submit" value="Enviar" />
               </form>
