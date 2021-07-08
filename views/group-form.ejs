@@ -148,7 +148,13 @@
                 <h3 class="margin-left: 30px;"> El grupo no tiene recursos</h3>  
             <% } %>  
           </div>
-          <div id="div3" class="margin: 20px;">
+          <div id="div3" style="text-align: center;">
+            <form action="/html/tags/html_form_tag_action.cfm" method="post">
+              <h2 class="background"><span>Escriba un texto:</span></h2><br />
+              <textarea name="comments" id="comments">
+              </textarea><br />
+              <input type="submit" value="Enviar" />
+              </form>
           </div>
         </div>
   </div>

@@ -144,30 +144,6 @@ const addMember = function(req, res, query, input) {
 };
 
 
-// // Un Usuario Administrador de Grupo agrega a un Usuario al Grupo especificando si es Miembro o Administrador
-// // Primero se chequea si ese Usuario tiene el permiso de Agregar en el Grupo especificado
-// agregarPersona(emailUser,nombreGrupo,emailNuevoUsuario,rol){
-//     //Chequeo si tengo esos permisos
-//     resultSoyAdmin = SELECT * FROM UsuarioGrupo WHERE nombreUser = emailUser AND nombreGrupo = nombreGrupo AND agregar = True;
-//     if(!resultSoyAdmin.empty){
-//       // Tengo el permiso de Agregar! :)
-//       if(rol='Miembro'){
-//         resultNuevoMiembro = INSERT INTO UsuarioGrupo VALUES (emailNuevoUsuario,nombreGrupo,'-',false,true,true);
-//         if(no devuelve error){
-//           return 'Nuevo Miembro agregado satisfactoriamente'
-//         }
-//       }if else(rol='Administrador'){
-//         resultNuevoAdmin = INSERT INTO UsuarioGrupo VALUES (emailNuevoUsuario,nombreGrupo,'-',true,true,true);
-//         if(no devuelve error){
-//           return 'Nuevo Administrador agregado satisfactoriamente'
-//         }
-//       }else{
-//         return 'Nombre de Rol equivocado'
-//       }
-//     }
-//   }
-
-
 //   subirArchivo(emailUser,nombreGrupo, archivo,nombreRecurso){
 //     // Ver como es mandar un MEDIUMBLOB a la DB y como tomarlo desde la Web
 //     resultSet = SELECT * FROM UsuarioGrupo WHERE nombreUser = emailUser, nombreGrupo = nombreGrupo , agregar = True;
