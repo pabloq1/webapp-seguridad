@@ -187,11 +187,11 @@ const addMember = function(req, res, query, input) {
     db.query(SQL_CHECK_EXISTING_ROLE, [input.nombreUser, input.nombreGrupo], function(err, query_result) {
         if (err) throw err
         if (query_result.length > 0) {
-            res.render('confirmation-form', {msg: `La persona ${ req.session.emailAddress } ya se encuentra asignada al grupo ${input.nombreGrupo}`, email: req.session.emailAddress })
+            res.render('confirmation-form', {msg: `La persona ${ input.nombreUser } ya se encuentra asignada al grupo ${input.nombreGrupo}`, email: input.nombreUser })
         } else {
             db.query(query, [input], function(err, query_result) {
                 if (err) throw err
-                res.render('confirmation-form', {msg: `El usuario ${ req.session.emailAddress } ha sido agregado al grupo ${input.nombreGrupo} con éxito.`, email: req.session.emailAddress})
+                res.render('confirmation-form', {msg: `El usuario ${ input.nombreUser } ha sido agregado al grupo ${input.nombreGrupo} con éxito.`, email: input.nombreUser})
             })
         }
     })
